@@ -5,6 +5,7 @@
 package com.mycompany.registro;
 
 import java.sql.Connection;
+import static java.sql.JDBCType.NULL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -134,15 +135,28 @@ public class Registro extends javax.swing.JFrame {
 
     private void btEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnterActionPerformed
         try (Connection conexao = new Conexao().getConnection()) {
-            String sql = String.format("SELECT nickname FROM users WHERE nickname LIKE '%s';", cxUsername.getText());
-            PreparedStatement statement = conexao.prepareStatement(sql);
+            PreparedStatement statement = conexao.prepareStatement("SELECT nickname, password_user FROM users");
             ResultSet resultSet = statement.executeQuery();
-
-            // Process the query result
             while (resultSet.next()) {
-                String nickname = resultSet.getString("nickname");
-                // Do something with the retrieved nickname
-                System.out.println(nickname);
+                String usuario = resultSet.getString("nickname");
+                String senha = resultSet.getString("password_user");
+                if(cxUsername.getText().equals(usuario) && senha.equals(cxPassword.getText())){
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "USUARIO EXISTENTE",
+                        "VERIFICACAO",
+                        0
+                );
+                    return;
+                }else{
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "USUARIO INEXISTENTE",
+                        "VERIFICACAO",
+                        2
+                );
+                        return;
+                }
             }
 
         } catch (SQLException e) {
